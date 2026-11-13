@@ -1,4 +1,5 @@
 export default function ManutencaoPage() {
+  const mensagem = `Estamos em Manutenção para melhor atende-los`;
   return (
     <main className="min-h-screen flex items-center justify-center text-black p-6 font-fredoka">
       <div
@@ -31,8 +32,9 @@ export default function ManutencaoPage() {
         </p>
 
         {/* Opcional: troque pelo link do seu WhatsApp ou Instagram, ou remova este bloco */}
+
         <a
-          href="https://wa.me"
+          href={`https://wa.me/${process.env.WHATSAPP_MIMOZI}?text=${mensagem}, "_blank`}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-block bg-primary hover:bg-primary/80 text-white font-semibold px-7 py-3.5 rounded-xl transition-all hover:-translate-y-0.5"

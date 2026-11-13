@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 
 const EMAIL_OFICIAL = "contatomimozi.personalizados@gmail.com";
-const WHATSAPP_MIMOZI = "5541997759542";
+const WHATSAPP_MIMOZI = "5541988420291";
 
 const CATALOGO_PROMOCOES: Record<
   string,

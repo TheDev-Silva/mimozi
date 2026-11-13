@@ -215,7 +215,7 @@ function PurchaseContent() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* COLUNA ESQUERDA: VITRINE */}
         <div className="lg:col-span-6 bg-white rounded-3xl p-6 shadow-md border border-gray-100 space-y-6">
-          <div className="relative w-full aspect-[4/5] max-h-[460px] rounded-2xl overflow-hidden bg-pink-50 border border-gray-200 shadow-inner">
+          <div className="relative w-full aspect-4/5 max-h-115 rounded-2xl overflow-hidden bg-pink-50 border border-gray-200 shadow-inner">
             <img
               src={produto.imagem}
               alt={produto.titulo}

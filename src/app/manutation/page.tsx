@@ -35,7 +35,7 @@ export default function ManutencaoPage() {
           href="https://wa.me"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-block bg-primary hover:bg-primary/80 text-slate-950 font-semibold px-7 py-3.5 rounded-xl transition-all hover:-translate-y-0.5"
+          className="inline-block bg-primary hover:bg-primary/80 text-white font-semibold px-7 py-3.5 rounded-xl transition-all hover:-translate-y-0.5"
         >
           Falar conosco
         </a>

@@ -62,7 +62,7 @@ export function Hero() {
   return (
     <section
       id="hero"
-      className="relative flex md:flex-col flex-row w-full min-h-screen items-center justify-between pt-24 md:pt-22  overflow-hidden font-fredoka"
+      className="relative flex flex-col w-full min-h-screen items-center justify-between pt-24 md:pt-22  overflow-hidden font-fredoka"
     >
       <div className="w-full pt-20">
         <PromoBanner />
@@ -97,7 +97,7 @@ export function Hero() {
               className="flex w-60 px-4 bg-primary text-white py-3 rounded-full font-medium hover:bg-primary/80 transition-colors duration-200 items-center justify-center gap"
             >
               <LucideUploadCloud size={20} className="mr-2" />
-              Mandar Idéia detalhada
+              <span className="text-xs md:text-sm">Mandar Idéia detalhada</span>
             </Link>
             <Link
               href="/personalizer"

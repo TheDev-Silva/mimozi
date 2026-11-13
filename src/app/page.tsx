@@ -5,6 +5,7 @@ import HeaderList from "../components/HeaderList";
 import { Hero } from "../components/Hero";
 import { useEffect, useRef, useState } from "react";
 import { Catalog } from "../components/Catalog";
+import ManutencaoPage from "./manutation/page";
 
 export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -38,18 +39,18 @@ export default function Home() {
 
   return (
     <>
-      <Header />
+      {/* <Header />
       <HeaderList />
 
       <main>
-        {/* Seção Hero principal */}
+        
         <div ref={heroRef}>
           <Hero />
         </div>
 
         <div ref={secaoRef}></div>
 
-        {/* Seção do Catálogo */}
+      
         <div ref={catalogoRef}>
           <Catalog />
         </div>
@@ -57,7 +58,8 @@ export default function Home() {
         <div ref={aboutRef} id="about" />
         <div ref={etiquetaRef} id="etiqueta" />
         <div ref={depoimentosRef} id="depoimentos" />
-      </main>
+      </main> */}
+      <ManutencaoPage />
     </>
   );
 }

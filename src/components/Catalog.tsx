@@ -8,6 +8,8 @@ import {
   LucideFlame,
   LucidePencilSparkles,
   LucideZoomIn,
+  ShoppingBag,
+  Send,
 } from "lucide-react";
 import {
   BOTTON_MODELS,
@@ -17,6 +19,7 @@ import {
 } from "../data/buttons";
 import ImageZoom from "./ImageZoom";
 import Link from "next/link";
+import { useCart } from "../app/contex/CartContext";
 
 interface ImagemItem {
   id: number;
@@ -25,13 +28,21 @@ interface ImagemItem {
   format: string;
 }
 
+const WHATSAPP_MIMOZI = "5541997759542";
+
 export function Catalog() {
   const [activeDiscountId, setActiveDiscountId] = useState(menuDescont[0]?.id);
   const [imagemAtiva, setImagemAtiva] = useState<ImagemItem | null>(null);
+
   // Estados de Filtro e Busca
   const [selectedCategory, setSelectedCategory] = useState<string>("todos");
   const [selectedFormat, setSelectedFormat] = useState<string>("todos");
   const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const { addToCart } = useCart();
+
+  // Feedback visual individual por produto ao adicionar ao carrinho
+  const [addedId, setAddedId] = useState<string | null>(null);
 
   // Filtragem combinada por Categoria, Formato e Busca por texto
   const filteredModels = useMemo(() => {
@@ -50,15 +61,32 @@ export function Catalog() {
     });
   }, [selectedCategory, selectedFormat, searchQuery]);
 
-  const renderFormat = (status: string) => {
-    switch (status) {
-      case "quadrado":
-        return "Quadrado 5cm";
-      case "redondo":
-        return "Redondo 5cm";
-      case "conjunto":
-        return "Conjunto Quadrado e Redondo";
-    }
+  // Função para adicionar ao carrinho global
+  const handleAddToCart = (item: any) => {
+    addToCart({
+      id: String(item.id),
+      titulo: item.title,
+      precoUnitario: Number(item.price),
+      quantidade: 1, // Quantidade padrão inicial no catálogo
+      tipo: "unitario",
+      detalhes: `Molde: ${item.title} (${item.format || "Padrão"})`,
+      imagem: item.image,
+    });
+
+    setAddedId(String(item.id));
+    setTimeout(() => setAddedId(null), 2500);
+  };
+
+  // Função para compra direta via WhatsApp de um item do catálogo
+  const handleDirectWhatsApp = (item: any) => {
+    const mensagem = encodeURIComponent(
+      `💖 *PEDIDO RÁPIDO - CATALOGO MIMOZI* 💖\n\n` +
+        `🏷️ *Item:* ${item.title}\n` +
+        `📦 *Formato:* ${item.format || "Padrão"}\n` +
+        `💰 *Preço Unitário:* R$ ${item.price}\n\n` +
+        `Gostaria de prosseguir com este modelo!`,
+    );
+    window.open(`https://wa.me/${WHATSAPP_MIMOZI}?text=${mensagem}`, "_blank");
   };
 
   return (
@@ -112,12 +140,10 @@ export function Catalog() {
             </div>
           </div>
 
-          {/* Bloco de Descontos Interativo */}
-          <div className="w-full lg:w-auto">
+          {/* <div className="w-full lg:w-auto">
             <nav className="grid grid-cols-4 gap-2 lg:flex lg:flex-row lg:gap-3 justify-center w-full">
               {menuDescont.map((item) => {
                 const isActiveDiscount = activeDiscountId === item.id;
-
                 return (
                   <button
                     key={item.id}
@@ -142,13 +168,12 @@ export function Catalog() {
                 );
               })}
             </nav>
-          </div>
+          </div> */}
         </div>
 
         {/* Área de Filtros e Busca */}
         <div className="w-full flex flex-col justify-center gap-6 pb-6">
           <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
-            {/* Input de Busca */}
             <div className="flex bg-white border border-gray-200 rounded-full px-4 py-2.5 items-center gap-2 shadow-sm w-full md:w-80">
               <LucideSearch size={18} className="text-gray-400 shrink-0" />
               <input
@@ -160,7 +185,6 @@ export function Catalog() {
               />
             </div>
 
-            {/* Menu de Formatos */}
             <nav className="flex gap-2 items-center overflow-x-auto pb-2 md:pb-0 scrollbar-none justify-start md:justify-end">
               {FORMATS.map((fmt) => {
                 const isActive = selectedFormat === fmt.id;
@@ -182,11 +206,9 @@ export function Catalog() {
             </nav>
           </div>
 
-          {/* Menu de Temas / Categorias */}
           <nav className="w-full flex overflow-x-auto items-center gap-2 md:gap-3 pb-2 scrollbar-none">
             {CATEGORIES.map((cat) => {
               const isActiveTheme = selectedCategory === cat.id;
-
               return (
                 <button
                   key={cat.id}
@@ -207,98 +229,130 @@ export function Catalog() {
           {/* Grid de Cards de Moldes */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
             {filteredModels.length > 0 ? (
-              filteredModels.map((item) => (
-                <div
-                  key={item.id}
-                  className="bg-rose-50/50 border border-rose-100 rounded-2xl p-4 flex flex-col items-center relative hover:shadow-lg transition-shadow"
-                >
-                  {/* Badges superiores */}
-                  <div className="w-full flex justify-between items-center mb-3">
-                    {item.badge ? (
-                      <span className="text-xs bg-pink-100 text-pink-700 px-3 py-1 rounded-full font-medium flex flex-row items-center">
-                        <LucideFlame size={16} /> {item.badge}
-                      </span>
-                    ) : (
-                      <div />
-                    )}
-                    <span className="text-xs bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full font-medium">
-                      {item.format === "quadrado"
-                        ? "Quadrado 5cm"
-                        : item.format === "redondo"
-                          ? "Redondo 5cm"
-                          : "Conjunto ( Quadrado e Redondo )"}
-                    </span>
-                  </div>
+              filteredModels.map((item) => {
+                const isItemAdded = addedId === String(item.id);
 
-                  {/* Exibição Direta da Imagem Mockupada (Pronta do Corel/Design) */}
-                  <div className="w-48 h-48 my-2 flex items-center justify-center overflow-hidden drop-shadow-md relative group">
-                    {item.image ? (
-                      <img
-                        src={item.image ?? "/button"}
-                        alt={item.title}
-                        className="w-full h-full object-contain transition-transform duration-300 hover:scale-110 hover:transform rotate-3 hover:rotate-0"
-                      />
-                    ) : (
-                      // Fallback caso não haja imagem cadastrada ainda
-                      <div className="w-full h-full bg-gray-200 rounded-xl flex items-center justify-center text-xs text-gray-400">
-                        Sem Imagem
-                      </div>
-                    )}
-
-                    {/* Botão de Zoom posicionado de forma absoluta dentro do container da imagem */}
-                    {item.image && (
-                      <button
-                        className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-white text-black p-2 rounded-full shadow-md transition-all opacity-0 group-hover:opacity-100"
-                        onClick={() => setImagemAtiva(item as any)}
-                        title="Visualizar em tela cheia"
-                      >
-                        <LucideZoomIn size={18} />
-                      </button>
-                    )}
-                  </div>
-
-                  {/* Títulos do Card */}
-                  <div className="text-center mt-3">
-                    <h3 className="font-semibold text-gray-800 text-sm">
-                      {item.title}
-                    </h3>
-                    {item.subtitle && (
-                      <p className="text-xs text-gray-500 mt-1">
-                        {item.subtitle}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="w-full px-4 py-2 flex flex-col md:flex-row justify-between font-fredoka bg-secondary/10">
-                    <div className="flex flex-col pb-4">
-                      <h3>A partir de</h3>
-                      <h1 className="flex flex-row text-3xl font-bold text-primary">
-                        R$ {item.price}
-                        <span className="text-[10px] items-end text-gray-400 font-normal pl-2">
-                          /un
+                return (
+                  <div
+                    key={item.id}
+                    className="bg-rose-50/50 border border-rose-100 rounded-2xl p-4 flex flex-col items-center relative hover:shadow-lg transition-shadow justify-between"
+                  >
+                    {/* Topo do Card */}
+                    <div className="w-full flex justify-between items-center mb-3">
+                      {item.badge ? (
+                        <span className="text-xs bg-pink-100 text-pink-700 px-3 py-1 rounded-full font-medium flex flex-row items-center gap-1">
+                          <LucideFlame size={16} /> {item.badge}
                         </span>
-                      </h1>
+                      ) : (
+                        <div />
+                      )}
+                      <span className="text-xs bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full font-medium">
+                        {item.format === "quadrado"
+                          ? "Quadrado 5cm"
+                          : item.format === "redondo"
+                            ? "Redondo 5cm"
+                            : "Conjunto ( Quadrado e Redondo )"}
+                      </span>
                     </div>
-                    <Link
-                      key={item.id}
-                      href={`/details/${item.id}`}
-                      className={`flex flex-row items-center justify-center md:my-4 w-full lg:w-30 text-center py-3 cursor-pointer bg-primary rounded-2xl uppercase gap-2`}
-                    >
-                      <LucidePencilSparkles className="text-white" size={16} />
-                      <p className="text-white text-xs">usar molde</p>
-                    </Link>
+
+                    {/* Imagem e Zoom */}
+                    <div className="w-48 h-48 my-2 flex items-center justify-center overflow-hidden drop-shadow-md relative group">
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="w-full h-full object-contain transition-transform duration-300 hover:scale-110 hover:transform rotate-3 hover:rotate-0"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-200 rounded-xl flex items-center justify-center text-xs text-gray-400">
+                          Sem Imagem
+                        </div>
+                      )}
+
+                      {item.image && (
+                        <button
+                          className="absolute top-2 right-2 z-10 bg-white/80 hover:bg-white text-black p-2 rounded-full shadow-md transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
+                          onClick={() => setImagemAtiva(item as any)}
+                          title="Visualizar em tela cheia"
+                        >
+                          <LucideZoomIn size={18} />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Títulos do Card */}
+                    <div className="text-center mt-2 mb-2">
+                      <h3 className="font-semibold text-gray-800 text-sm">
+                        {item.title}
+                      </h3>
+                      {item.subtitle && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          {item.subtitle}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Bloco de Preço e Ações */}
+                    <div className="w-full bg-secondary/10 rounded-2xl p-3 flex flex-col gap-3 mt-2">
+                      <div className="flex justify-between items-center px-1">
+                        <div>
+                          <span className="text-[10px] text-gray-500 uppercase font-semibold">
+                            A partir de
+                          </span>
+                          <h4 className="text-xl font-bold text-primary flex items-baseline">
+                            R$ {item.price}
+                            <span className="text-[10px] text-gray-400 font-normal ml-1">
+                              /un
+                            </span>
+                          </h4>
+                        </div>
+                        <Link
+                          href={`/details/${item.id}`}
+                          className="text-xs text-primary underline font-medium hover:text-primary/80"
+                        >
+                          Personalizar
+                        </Link>
+                      </div>
+
+                      {/* 🚀 AS DUAS OPÇÕES DE BOTÃO SOLICITADAS */}
+                      <div className="grid grid-cols-2 gap-2">
+                        {/* 1. ADICIONAR AO CARRINHO */}
+                        <button
+                          type="button"
+                          onClick={() => handleAddToCart(item)}
+                          className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                            isItemAdded
+                              ? "bg-emerald-600 text-white"
+                              : "bg-white border border-primary text-primary hover:bg-pink-50"
+                          }`}
+                        >
+                          <ShoppingBag size={14} />
+                          {isItemAdded ? "Adicionado!" : "Carrinho"}
+                        </button>
+
+                        {/* 2. COMPRAR DIRETO NO WHATSAPP */}
+                        <button
+                          type="button"
+                          onClick={() => handleDirectWhatsApp(item)}
+                          className="flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold bg-primary text-white hover:bg-primary/90 transition-all shadow-sm cursor-pointer"
+                        >
+                          <Send size={14} /> WhatsApp
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <div className="col-span-full text-center py-12 text-gray-500">
                 Nenhum molde encontrado para os filtros selecionados.
               </div>
             )}
+
             {imagemAtiva && (
               <ImageZoom
                 imagem={imagemAtiva as any}
-                onClose={() => setImagemAtiva(null)} // Reseta o estado para fechar
+                onClose={() => setImagemAtiva(null)}
               />
             )}
           </div>

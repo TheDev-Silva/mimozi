@@ -11,6 +11,7 @@ import {
   Momo_Trust_Sans,
 } from "next/font/google";
 import "./globals.css";
+import { CartProvider } from "./contex/CartContext";
 
 const momoTrustSans = Momo_Trust_Sans({
   variable: "--font-momo-trust-sans",
@@ -69,7 +70,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="pt-br"
       className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${sofia.variable} ${barlowCondensed.variable} ${inter.variable} ${fredoka.variable} ${momoTrustSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <CartProvider>
+        <body className="min-h-full flex flex-col">{children}</body>
+      </CartProvider>
     </html>
   );
 }

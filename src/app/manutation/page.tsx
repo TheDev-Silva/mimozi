@@ -1,7 +1,9 @@
+"use client";
 export default function ManutencaoPage() {
-  const mensagem = `Estamos em Manutenção para melhor atende-los`;
+  const mensagem = `Olá, preciso de atendimento ao meu projeto urgente`;
+  const tel = "5541988420291";
   return (
-    <main className="min-h-screen flex items-center justify-center text-black p-6 font-fredoka">
+    <main className="min-h-screen flex items-center justify-center text-black p-6 font-fredoka relative">
       <div
         style={{
           backgroundImage: `url(/logomimozi.jpeg)`,
@@ -15,9 +17,9 @@ export default function ManutencaoPage() {
           inset: 0,
         }}
       />
-      <div></div>
-      <div className="max-w-lg w-full bg-white/5 border border-white/10 backdrop-blur-md rounded-2xl p-8 md:p-12 text-center shadow-2xl">
-        <span className="inline-block bg-sky-400/15 text-primary text-xs font-semibold px-3.5 py-1.5 rounded-full uppercase tracking-wider mb-6">
+
+      <div className="max-w-lg w-full bg-white/60 border border-black/10 backdrop-blur-md rounded-2xl p-8 md:p-12 text-center shadow-2xl">
+        <span className="inline-block bg-primary/15 text-primary text-xs font-semibold px-3.5 py-1.5 rounded-full uppercase tracking-wider mb-6">
           Em Manutenção
         </span>
 
@@ -25,24 +27,28 @@ export default function ManutencaoPage() {
           Estamos preparando algo incrível
         </h1>
 
-        <p className="text-slate-400 text-base leading-relaxed mb-8">
+        <p className="text-slate-600 text-base leading-relaxed mb-6">
           O site da <strong className="text-black">Mimozi</strong> está passando
           pelos últimos ajustes para oferecer a melhor experiência para você.
           Voltamos em breve!
         </p>
 
-        {/* Opcional: troque pelo link do seu WhatsApp ou Instagram, ou remova este bloco */}
+        <div className="bg-secondary/20 border border-secondary/40 rounded-xl p-5 mb-8 text-center">
+          <p className="text-black text-sm font-medium mb-2">
+            * Caso já tenha um projeto conosco e queira atendimento ou ajuda,
+            entre em contato com a gente no whatsapp clicando logo abaixo!
+          </p>
+        </div>
 
         <a
-          href={`https://wa.me/${process.env.WHATSAPP_MIMOZI}?text=${mensagem}, "_blank`}
+          href={`https://wa.me/${tel}?text=${mensagem}`}
           target="_blank"
-          rel="noopener noreferrer"
           className="inline-block bg-primary hover:bg-primary/80 text-white font-semibold px-7 py-3.5 rounded-xl transition-all hover:-translate-y-0.5"
         >
-          Falar conosco
+          <p>Falar Conosco</p>
         </a>
 
-        <footer className="mt-8 text-xs text-slate-500">
+        <footer className="mt-8 text-xs text-slate-600">
           &copy; 2026 Mimozi. Todos os direitos reservados.
         </footer>
       </div>
